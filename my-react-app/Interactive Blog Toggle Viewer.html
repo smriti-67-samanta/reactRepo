@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Reader</title>
+  <!-- Load React and ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 8px;
+      margin: 5px 0;
+      background: #f0f0f0;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    li:hover {
+      background: #e0e0e0;
+    }
+    .selected {
+      font-weight: bold;
+      background: #d0d0d0;
+    }
+    .blog-content {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    function BlogList() {
+      
+      const blogs = [
+        {
+          id: 1,
+          title: 'Getting Started with React',
+          content: 'React is a JavaScript library for building user interfaces. It lets you compose complex UIs from small and isolated pieces of code called components. React has a few different kinds of components, but we\'ll start with React.Component subclasses.'
+        },
+        {
+          id: 2,
+          title: 'Understanding Hooks',
+          content: 'Hooks are a new addition in React 16.8. They let you use state and other React features without writing a class. The useState hook is what allows us to add a React state to function components. You might have previously known these as "stateless components".'
+        },
+        {
+          id: 3,
+          title: 'The Power of Components',
+          content: 'Components let you split the UI into independent, reusable pieces, and think about each piece in isolation. Conceptually, components are like JavaScript functions. They accept arbitrary inputs (called "props") and return React elements describing what should appear on the screen.'
+        }
+      ];
+
+      
+      const [selectedBlog, setSelectedBlog] = useState(null);
+
+      return (
+        <div>
+          <h1>Blog Posts</h1>
+          <ul>
+            {blogs.map(blog => (
+              <li 
+                key={blog.id}
+                onClick={() => setSelectedBlog(blog)}
+                className={selectedBlog?.id === blog.id ? 'selected' : ''}
+              >
+                {blog.title}
+              </li>
+            ))}
+          </ul>
+
+          <div className="blog-content">
+            <h2>Blog Content</h2>
+            {selectedBlog ? (
+              <div>
+                <h3>{selectedBlog.title}</h3>
+                <p>{selectedBlog.content}</p>
+              </div>
+            ) : (
+              <p>Select a blog to read</p>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      return <BlogList />;
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
