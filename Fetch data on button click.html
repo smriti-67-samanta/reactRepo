@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Fetcher</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script crossorigin src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .fetch-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .fetch-btn:hover {
+            background-color: #45a049;
+        }
+        .fetch-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .loading {
+            color: #2196F3;
+        }
+        .error {
+            color: #f44336;
+            background-color: #ffebee;
+        }
+        .success {
+            color: #4CAF50;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #2196F3;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function ProductFetcher() {
+            const [loading, setLoading] = useState(false);
+            const [error, setError] = useState(null);
+            const [success, setSuccess] = useState(false);
+
+            const fetchProducts = async () => {
+                setLoading(true);
+                setError(null);
+                setSuccess(false);
+                
+                try {
+                    const response = await axios.get('https://fakestoreapi.com/products');
+                    console.log('Fetched products:', response.data);
+                    setSuccess(true);
+                } catch (err) {
+                    console.error('Error fetching products:', err);
+                    setError('Failed to fetch products. Please check console for details.');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            return (
+                <div className="container">
+                    <h1>Product Fetcher</h1>
+                    <p>Click the button to fetch products and log them to console</p>
+                    
+                    <button 
+                        className="fetch-btn" 
+                        onClick={fetchProducts}
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <>
+                                <span>Fetching...</span>
+                                <div className="spinner"></div>
+                            </>
+                        ) : 'Fetch Products'}
+                    </button>
+                    
+                    {loading && (
+                        <div className="status loading">
+                            Loading products...
+                        </div>
+                    )}
+                    
+                    {error && (
+                        <div className="status error">
+                            {error}
+                        </div>
+                    )}
+                    
+                    {success && !loading && (
+                        <div className="status success">
+                            Products fetched successfully! Check browser console.
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<ProductFetcher />);
+    </script>
+</body>
+</html>
