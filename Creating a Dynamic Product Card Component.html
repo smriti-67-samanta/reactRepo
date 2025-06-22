@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Card</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+  <style>
+    .card { border: 1px solid #ccc; padding: 10px; width: 200px; text-align: center; display: grid; }
+    .image { width: 100%; height: auto; }
+    .badge { background-color: red; color: white; padding: 5px; border-radius: 5px; }
+    .form-container { margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+    .form-group { margin-bottom: 10px; }
+    .form-group label { display: block; margin-bottom: 5px; }
+    .form-group input { width: 100%; padding: 5px; }
+    .error { color: red; font-size: 0.9rem; margin-top: 5px; }
+    button { padding: 5px 10px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background-color: #218838; }
+    .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    function ProductCard({ name, price, image, discount }) {
+      return (
+        <div className="card">
+          <img src={image} alt={name} className="image" />
+          <h3>{name}</h3>
+          <p>${price}</p>
+          {discount && <div className="badge">{discount}% OFF</div>}
+        </div>
+      );
+    }
+
+    function App() {
+      const [products, setProducts] = React.useState([
+        { name: "Wireless Headphones", price: 49.99, image: "https://via.placeholder.com/150", discount: 15 },
+        { name: "Smart Watch", price: 99.99, image: "https://via.placeholder.com/150" },
+        { name: "Bluetooth Speaker", price: 29.99, image: "https://via.placeholder.com/150", discount: 10 }
+      ]);
+      const [form, setForm] = React.useState({ name: '', price: '', image: '', discount: '' });
+      const [errors, setErrors] = React.useState({});
+
+      const validateForm = () => {
+        const newErrors = {};
+        if (!form.name.trim()) newErrors.name = 'Name is required';
+        if (isNaN(form.price) || Number(form.price) <= 0) newErrors.price = 'Price must be a positive number';
+        if (!form.image.includes('http')) newErrors.image = 'Image must be a valid URL';
+        if (form.discount && (isNaN(form.discount) || Number(form.discount) < 0 || Number(form.discount) > 100)) {
+          newErrors.discount = 'Discount must be between 0 and 100';
+        }
+        return newErrors;
+      };
+
+      const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+        setErrors({});
+      };
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        const validationErrors = validateForm();
+        if (Object.keys(validationErrors).length === 0) {
+          setProducts([...products, {
+            name: form.name,
+            price: Number(form.price),
+            image: form.image,
+            discount: form.discount ? Number(form.discount) : undefined
+          }]);
+          setForm({ name: '', price: '', image: '', discount: '' });
+        } else {
+          setErrors(validationErrors);
+        }
+      };
+
+      return (
+        <div>
+          <div className="cards-grid">
+            {products.map((product, index) => (
+              <ProductCard
+                key={index}
+                name={product.name}
+                price={product.price}
+                image={product.image}
+                discount={product.discount}
+              />
+            ))}
+          </div>
+          <div className="form-container">
+            <h3>Add New Product</h3>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label>Name</label>
+                <input type="text" name="name" value={form.name} onChange={handleChange} />
+                {errors.name && <div className="error">{errors.name}</div>}
+              </div>
+              <div className="form-group">
+                <label>Price</label>
+                <input type="number" name="price" value={form.price} onChange={handleChange} step="0.01" />
+                {errors.price && <div className="error">{errors.price}</div>}
+              </div>
+              <div className="form-group">
+                <label>Image URL</label>
+                <input type="text" name="image" value={form.image} onChange={handleChange} />
+                {errors.image && <div className="error">{errors.image}</div>}
+              </div>
+              <div className="form-group">
+                <label>Discount (%)</label>
+                <input type="number" name="discount" value={form.discount} onChange={handleChange} min="0" max="100" />
+                {errors.discount && <div className="error">{errors.discount}</div>}
+              </div>
+              <button type="submit">Add Product</button>
+            </form>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
