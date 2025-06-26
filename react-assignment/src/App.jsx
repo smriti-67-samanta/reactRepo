@@ -3,6 +3,7 @@ import './App.css'
 import ThemeApp from './components/ThemeApp'
 import FetchData from './components/FetchData'
 import UserProfile from './components/UserProfile'
+import Stopwatch from './components/Stopwatch'
 
 function App() {
  
@@ -12,6 +13,7 @@ function App() {
       <ThemeApp/>
      <div><FetchData/></div>
       <div><UserProfile/></div>
+      <div><Stopwatch/></div>
         
     </>
   )
