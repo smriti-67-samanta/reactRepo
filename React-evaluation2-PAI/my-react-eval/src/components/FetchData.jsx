@@ -6,7 +6,8 @@ const [data,setData]=useState([])
 
 async function showdata() {
     try{
-let response=await fetch("https://fakestoreapi.com/products")
+let response=await fetch("https://fakestoreapi.com/products") // used fakestore api as a demo api
+
 let result=await response.json()
   setData(result);
     }
